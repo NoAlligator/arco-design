@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { Dayjs } from 'dayjs';
 import omit from '../../_util/omit';
-import { Enter } from '../../_util/keycode';
+import { Enter, Esc } from '../../_util/keycode';
 import { ConfigContext } from '../../ConfigProvider';
 import IconClose from '../../../icon/react-icon/IconClose';
 import IconHover from '../../_class/icon-hover';
@@ -31,6 +31,7 @@ export interface DateInputProps {
   onClear?: (e) => void;
   editable?: boolean;
   onPressEnter?: () => void;
+  onPressEsc?: () => void;
   onChange?: (e) => void;
   suffixIcon?: ReactNode;
   isPlaceholder?: boolean;
@@ -57,6 +58,7 @@ function DateInput(
     value,
     inputValue,
     onPressEnter,
+    onPressEsc,
     suffixIcon,
     onChange,
     popupVisible,
@@ -80,8 +82,17 @@ function DateInput(
 
   function onKeyDown(e) {
     const keyCode = e.keyCode || e.which;
-    if (keyCode === Enter.code) {
-      onPressEnter && onPressEnter();
+    switch (keyCode) {
+      case Enter.code: {
+        onPressEnter && onPressEnter();
+        break;
+      }
+      case Esc.code: {
+        onPressEsc && onPressEsc();
+        break;
+      }
+      default:
+        break;
     }
   }
 

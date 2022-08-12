@@ -194,10 +194,6 @@ const Picker = (baseProps: InnerPickerProps) => {
     refInput.current && refInput.current.blur && refInput.current.focus();
   }
 
-  function blurInput() {
-    refInput.current && refInput.current.blur && refInput.current.blur();
-  }
-
   const previousUtcOffset = usePrevious(utcOffset);
   const previousTimezone = usePrevious(timezone);
 
@@ -224,7 +220,6 @@ const Picker = (baseProps: InnerPickerProps) => {
       setTimeout(() => {
         setIsTimePanel(false);
         setPanelMode(mode);
-        blurInput();
       }, 100);
     }
   }, [mergedPopupVisible]);
@@ -340,11 +335,18 @@ const Picker = (baseProps: InnerPickerProps) => {
 
   function onPressEnter() {
     if (panelValue) {
+      if (!mergedPopupVisible) {
+        setOpen(true);
+        return;
+      }
       onConfirmValue();
-      blurInput();
-    } else if (mergedPopupVisible) {
-      setOpen(false);
     }
+  }
+
+  function onPressEsc() {
+    setOpen(false, () => {
+      focusInput();
+    });
   }
 
   function changePageShowDate(type: 'prev' | 'next', unit: UnitType, num = 1) {
@@ -547,6 +549,7 @@ const Picker = (baseProps: InnerPickerProps) => {
     error,
     size,
     onPressEnter,
+    onPressEsc,
     onClear,
     suffixIcon,
     editable: editable && typeof realFormat !== 'function',
